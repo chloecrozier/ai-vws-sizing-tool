@@ -31,6 +31,8 @@ Please refer to this guide to verify that all required software and development 
 
 ## Prerequisites
 
+> **Important**: Before proceeding with the deployment, ensure your VM is properly configured with vGPU passthrough. Follow the [VM Setup Configuration Guide](./VM_SETUP_CONFIG.md) for the prerequisite steps to set up your virtual machine.
+
 ### Required Software
 
 Running this toolkit on Linux-based virtual workstations:
