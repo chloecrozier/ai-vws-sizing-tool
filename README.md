@@ -18,11 +18,14 @@ This tool helps IT administrators, DevOps engineers, and solution architects mak
   - [NVIDIA Developer Program Setup](#nvidia-developer-program-setup)
   - [Deployment Steps](#deployment-steps)
   - [HuggingFace API Setup](#huggingface-api-setup)
+- [Project Structure](#project-structure)
+- [Examples and Demos](#examples-and-demos)
 - [Overview](#overview)
 - [Key Features](#key-features)
 - [Target Audience](#target-audience)
 - [Software Components](#software-components)
 - [Technical Diagram](#technical-diagram)
+- [Deployment Options](#deployment-options)
 - [Available Customizations](#available-customizations)
 - [Inviting the community to contribute](#inviting-the-community-to-contribute)
 - [License](#license)
@@ -105,7 +108,13 @@ Refer to the [VM Setup Configuration Guide](./VM_SETUP_CONFIG.md) for detailed V
    cd ai-vws-sizing-tool
    ```
 
-2. Set up your NGC API key and start the services:
+2. Install Python dependencies:
+   ```bash
+   # Install the main application dependencies
+   pip install -r src/requirements.txt
+   ```
+
+3. Set up your NGC API key and start the services:
    ```bash
    # Replace with your actual NGC API key
    export NGC_API_KEY="nvapi-your-key-here"
@@ -168,6 +177,90 @@ If you plan to use HuggingFace models that require authentication:
    ```
 
 **Note**: This is only required if you're using gated models or models that require authentication. The default configuration works with publicly available models.
+
+## Project Structure
+
+The AI vWS Sizing Advisor is organized into the following directories:
+
+```
+ai-vws-sizing-tool/
+├── README.md                    # Main project documentation
+├── VM_SETUP_CONFIG.md          # VM setup prerequisites guide
+├── LICENSE & LICENSE-3rd-party.txt  # License information
+├── SECURITY.md & CONTRIBUTING.md     # Security and contribution guidelines
+├── data/                        # Sample data and datasets
+├── deploy/                      # Docker Compose and Helm deployment files
+│   ├── compose/                # Docker Compose configurations
+│   ├── config/                 # Configuration files
+│   └── helm/                   # Kubernetes Helm charts
+├── docs/                        # Comprehensive documentation
+│   ├── api_reference/          # OpenAPI specifications
+│   ├── assets/                 # Documentation images
+│   └── *.md                    # Feature and setup guides
+├── examples/                    # Example scripts and demonstrations
+│   ├── README.md              # Examples documentation
+│   └── demo_model_extractor.py # Interactive model extraction demo
+├── frontend/                    # React-based web interface
+│   ├── src/                   # Frontend source code
+│   ├── public/                # Static assets
+│   └── package.json           # Node.js dependencies
+├── notebooks/                   # Jupyter notebooks for API exploration
+├── scripts/                     # Deployment and utility scripts
+├── src/                        # Main Python application source code
+│   ├── ingestor_server/       # Document ingestion service
+│   ├── observability/         # Monitoring and telemetry
+│   ├── requirements.txt       # Python dependencies
+│   └── *.py                   # Core application modules
+└── vgpu_docs/                  # NVIDIA vGPU reference documentation
+```
+
+## Examples and Demos
+
+The `examples/` directory contains demonstration scripts to help you understand the AI vWS Sizing Advisor functionality:
+
+### Model Name Extraction Demo
+Run the interactive model extraction demo:
+```bash
+cd examples
+python demo_model_extractor.py
+```
+
+This demo shows how the system extracts and matches model names from natural language queries. Try queries like:
+- "I need llama 3 with 8 billion parameters"
+- "Deploy mistral for chat"
+- "What's the best 70B model?"
+
+For more examples and detailed usage instructions, see the [examples README](./examples/README.md).
+
+### Frontend Development
+
+The web interface is built with React and Next.js. To run the frontend in development mode:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend will be available at http://localhost:3000 and provides an intuitive interface for:
+- Configuring AI workload parameters
+- Receiving vGPU sizing recommendations  
+- Viewing detailed capacity calculations and performance estimates
+- Exploring recommendation citations and sources
+
+### Jupyter Notebooks
+
+The `notebooks/` directory contains interactive Jupyter notebooks for exploring the API functionality:
+
+- `ingestion_api_usage.ipynb` - Document ingestion API examples
+- `retriever_api_usage.ipynb` - Vector search and retrieval examples
+- `launchable.ipynb` - Quick start notebook for testing
+
+To use the notebooks:
+```bash
+pip install jupyter
+jupyter lab notebooks/
+```
 
 ## Overview
 
@@ -337,12 +430,14 @@ See [Using self-hosted NVIDIA NIM microservices](./docs/quickstart.md#deploy-wit
 
 ## Next Steps
 
-- Follow the [Deployment Guide](#deployment-guide) to set up the AI vWS Sizing Advisor
-- See the [OpenAPI Specifications](./docs/api_reference)
-- Explore notebooks that demonstrate how to use the APIs [here](./notebooks/)
-- Explore [observability support](./docs/observability.md)
-- Explore [best practices for enhancing accuracy or latency](./docs/accuracy_perf.md)
-- For detailed deployment options, see [Get Started](./docs/quickstart.md)
+- **Get Started**: Follow the [Deployment Guide](#deployment-guide) to set up the AI vWS Sizing Advisor
+- **Prerequisites**: Complete [VM Setup](./VM_SETUP_CONFIG.md) before deployment
+- **API Reference**: See the [OpenAPI Specifications](./docs/api_reference/)
+- **Interactive Learning**: Explore [Jupyter notebooks](./notebooks/) and [examples](./examples/)
+- **Monitoring**: Set up [observability support](./docs/observability.md)
+- **Optimization**: Review [best practices for enhancing accuracy or latency](./docs/accuracy_perf.md)
+- **Advanced Deployment**: See [detailed deployment options](./docs/quickstart.md)
+- **Frontend Development**: Run the [React frontend](./frontend/) for web interface
 
 ## Available Customizations
 

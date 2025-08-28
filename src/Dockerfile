@@ -36,7 +36,7 @@ COPY LICENSE-3rd-party.txt /legal/
 
 # Install common dependencies for all examples
 RUN --mount=type=cache,id=pip_cache,target=/root/.cache/pip,sharing=locked \
-    --mount=type=bind,source=./requirements.txt,target=/opt/requirements.txt \
+    --mount=type=bind,source=./src/requirements.txt,target=/opt/requirements.txt \
     pip3 install --no-cache-dir -r /opt/requirements.txt
 
 # Set environment variables needed for Text splitter
