@@ -1,11 +1,10 @@
-
 <h1><img align="center" src="https://github.com/user-attachments/assets/cbe0d62f-c856-4e0b-b3ee-6184b7c4d96f">AI vWS Sizing Advisor</h1>
 
 ## Introduction
 
-AI vWS Sizing Advisor is designed explicitly for setting up the right Virtual Environment for diverse AI use cases - such as sizing NIMs, different LLMs, setting up environments for workloads such as inferencing, RAG, and fine-tuning. By leveraging a RAG architecture, the Advisor is able to take inputs on your AI workload and translate them into the exact tested vGPU configuration.
+The AI vWS Sizing Advisor is an intelligent tool designed to help you determine the optimal NVIDIA vGPU configuration for diverse AI workloads including inference, RAG (Retrieval Augmented Generation), and fine-tuning. By leveraging a RAG-based architecture and NVIDIA's extensive vGPU documentation, the Advisor analyzes your specific AI workload requirements and provides validated vGPU profile recommendations with detailed capacity calculations and performance estimates.
 
-Please refer to this guide to verify that all required software and development tools are properly installed and configured prior to initiating the deployment process.
+This tool helps IT administrators, DevOps engineers, and solution architects make informed decisions when deploying GPU-accelerated virtual environments for AI applications.
 
 ## Table of Contents
 
@@ -35,23 +34,41 @@ Please refer to this guide to verify that all required software and development 
 
 ### Required Software
 
-Running this toolkit on Linux-based virtual workstations:
+For running the AI vWS Sizing Advisor:
 
+**Host System Requirements:**
 - **NVIDIA vGPU Software**: vGPU version 17.4 or later
-- **Hypervisor**: vGPU supported hypervisors
-- **VM Operating System**: Ubuntu 24.04 or Ubuntu 22.04
-- **Minimum system requirements**: 16 vCPU, 24 GB system memory, 96 GB storage 
-- **Recommended vGPU profile**: 24Q
-- [Download Docker for Ubuntu here](https://docs.docker.com/engine/install/ubuntu/) (v20.10+)
-- [Download Docker Compose Plugin here](https://docs.docker.com/compose/install/)
-- [Activate, download, and install your RTX Virtual Workstation licenses](https://docs.nvidia.com/grid/latest/grid-licensing-user-guide/)
-- [Join the NVIDIA Developer Program](https://developer.nvidia.com/developer-program) to access NVIDIA NIM for Developers
+- **Hypervisor**: Any NVIDIA vGPU-supported hypervisor (vSphere, Hyper-V, KVM, etc.)
+- **NVIDIA vGPU License**: [Request a free 90-day evaluation license](https://www.nvidia.com/en-us/data-center/products/vgpu/vgpu-software-trial/) or activate existing RTX Virtual Workstation licenses
+
+**Virtual Machine Requirements:**
+- **Operating System**: Ubuntu 22.04 or Ubuntu 24.04
+- **vCPU**: 16 cores minimum
+- **Memory**: 24 GB RAM minimum (96 GB recommended for full NIM deployment)
+- **Storage**: 96 GB minimum
+- **vGPU Profile**: 24Q recommended (L40S-24Q, A40-24Q, or similar)
+
+**Software Dependencies:**
+- [Docker for Ubuntu](https://docs.docker.com/engine/install/ubuntu/) (v20.10+)
+- [Docker Compose Plugin](https://docs.docker.com/compose/install/)
+- [NVIDIA Developer Program membership](https://developer.nvidia.com/developer-program) for NIM access
 
 > **Important**: Don't have an NVIDIA vGPU license yet? [Request a free 90-day evaluation license](https://www.nvidia.com/en-us/data-center/products/vgpu/vgpu-software-trial/)
 
 ### Required Hardware
 
-NVIDIA Certified systems with any supported GPU with a 24Q profile
+**Physical GPU Requirements:**
+- NVIDIA Certified systems with supported datacenter GPUs:
+  - NVIDIA L40S (recommended)
+  - NVIDIA A40
+  - NVIDIA A100
+  - NVIDIA H100
+  - Other NVIDIA datacenter GPUs with vGPU support
+
+**vGPU Profile Support:**
+- Minimum: 12Q profile (12 GB vGPU memory)
+- Recommended: 24Q profile (24 GB vGPU memory)
+- For large models: 48Q profile (48 GB vGPU memory)
 
 ## Deployment Guide
 
@@ -59,38 +76,44 @@ NVIDIA Certified systems with any supported GPU with a 24Q profile
 
 ### Virtual Machine (VM) Configuration
 
-**Advisor Download**: Set up a Linux VM for creating the Advisor with the following configuration:
-- vCPU - 16 CPU
-- Memory - 96 GB
-- vGPU Profile - 24Q
+**VM Configuration for the Advisor:**
+- **vCPU**: 16 cores minimum
+- **Memory**: 24 GB minimum (96 GB recommended for full deployment)
+- **Storage**: 96 GB minimum
+- **vGPU Profile**: 24Q (L40S-24Q, A40-24Q, or equivalent)
 
-**Verification Step**: Set up a Linux VM based on the Advisor's Recommendation. To validate that this VM is properly configured run the following command:
-```bash
-nvidia-smi
-```
+**Verification Steps:**
+1. Verify vGPU is properly configured:
+   ```bash
+   nvidia-smi
+   ```
+   You should see your vGPU listed with available memory.
 
-At this point, the VM setup is complete. The installation guide for Ubuntu can be found [here](https://ubuntu.com/server/docs/install/step-by-step).
+2. Verify Docker is working:
+   ```bash
+   docker --version
+   docker compose version
+   ```
+
+Refer to the [VM Setup Configuration Guide](./VM_SETUP_CONFIG.md) for detailed VM setup instructions.
 
 ### Repository Setup
 
-**GitHub Repository**: https://github.com/NVIDIA-AI-Blueprints/rag
-
-1. Clone the repository onto your IDE's terminal:
+1. Clone this repository:
    ```bash
-   git clone https://github.com/anpandacoding/vws-sizing
-   cd vws-sizing
+   git clone <your-repository-url>
+   cd ai-vws-sizing-tool
    ```
 
-2. Within the shell, run the following commands (make sure you are in the workspace top root):
+2. Set up your NGC API key and start the services:
    ```bash
+   # Replace with your actual NGC API key
    export NGC_API_KEY="nvapi-your-key-here"
 
    # Authenticate to NVIDIA NGC Registry
    echo "${NGC_API_KEY}" | docker login nvcr.io -u '$oauthtoken' --password-stdin
 
-   source deploy/compose/.env
-
-   # Start core service
+   # Start the vGPU RAG service
    ./scripts/start_vgpu_rag.sh --skip-nims
    ```
 
@@ -107,14 +130,16 @@ To Obtain NVIDIA Developer Program Membership and a Personal API Key:
 
 ### Deployment Steps
 
-#### Launch the Local Server
+#### Launch the AI vWS Sizing Advisor
 
-1. Start the local web server:
+1. Start the RAG server:
    ```bash
    docker compose -f deploy/compose/docker-compose-rag-server.yaml up -d
    ```
 
-2. Open your browser to http://localhost:3000
+2. Access the web interface:
+   - Open your browser to http://localhost:3000
+   - Or access via the VM's IP address: http://[VM-IP]:3000
 
 #### Configure Your Workload
 
@@ -131,21 +156,18 @@ To Obtain NVIDIA Developer Program Membership and a Personal API Key:
 - **Expected TTFT**: Estimated Time to First Token
 - **Latency**: Predicted performance metrics under your config
 
-### HuggingFace API Setup
+### Optional: HuggingFace Integration
 
-To Obtain HuggingFace API Key + Access Permissions:
+If you plan to use HuggingFace models that require authentication:
 
-1. You must select the first two options in the User Permissions Section: 
-   - 'public gated repositories'
-   - 'repos under your personal namespace'
+1. Create a HuggingFace account at [huggingface.co](https://huggingface.co)
+2. Generate an API token in your [HuggingFace settings](https://huggingface.co/settings/tokens)
+3. Set the environment variable:
+   ```bash
+   export HUGGINGFACE_HUB_TOKEN="your-hf-token-here"
+   ```
 
-2. In the 'Apply Configuration', locate the input field
-3. Paste or enter your credentials
-4. The VM IP Address must source a VM that must fit the recommendation
-5. Start the Environment Container
-6. Apply Configuration
-
-This spins up the sandbox that runs your model microservice on the VM. Once the service container is started, you will receive a detailed log.
+**Note**: This is only required if you're using gated models or models that require authentication. The default configuration works with publicly available models.
 
 ## Overview
 
@@ -269,7 +291,7 @@ The image represents the architecture and workflow. Here's a step-by-step explan
    - For vGPU configurations, additional validation ensures only valid profiles are recommended
    - Capacity calculations and deployment recommendations are included where relevant
 
-## Minimum System Requirements
+## Deployment Options
 
 ### OS Requirements
 Ubuntu 22.04 OS
